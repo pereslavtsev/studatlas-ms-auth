@@ -1,23 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { ManagementClient, ManagementClientOptions } from 'auth0';
+import { AuthenticationClient, ManagementClient, ManagementClientOptions, User, SignInToken } from 'auth0';
+import { InjectConfig } from 'nestjs-config';
 
 @Injectable()
 export class UsersService {
+  private readonly management;
+  private readonly auth0;
 
-  constructor(private readonly x) {
-    this.x = 1;
+  constructor(@InjectConfig() private readonly config) {
+    const { domain, clientId, clientSecret }: ManagementClientOptions = config.get('auth0');
+    this.management = new ManagementClient({
+      domain,
+      clientId,
+      clientSecret,
+    });
+    this.auth0 = new AuthenticationClient({
+      domain,
+      clientId,
+      clientSecret,
+    });
   }
 
-  create() {
-
+  create(): Promise<User> {
+    return this.management.createUser();
   }
 
-  update() {
-
+  async getById(id: string): Promise<User> {
+    const { access_token }: SignInToken = await this.auth0.clientCredentialsGrant({
+      audience: `https://studatlas.eu.auth0.com/api/v2/`,
+    })
+    console.log(access_token)
+    return this.management.getUser({ id });
   }
 
-  remove() {
+  update() {}
 
+  remove(id: string) {
+    return this.management.deleteUser({ id });
   }
-
 }
