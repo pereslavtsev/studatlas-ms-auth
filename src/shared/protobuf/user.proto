@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package auth;
+
+service UserService {
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
+}
+
+message User {
+  string email = 1;
+  int32 email_verified = 2;
+  string username = 3;
+  string phone_number = 4;
+  int32 phone_verified = 5;
+  string user_id = 6;
+  string created_at = 7;
+  string updated_at = 8;
+  //identities?: Identity[];
+  // app_metadata?: A;
+  // user_metadata?: U;
+  string picture = 12;
+  string name = 13;
+  string nickname = 14;
+  repeated string multifactor = 15;
+  string last_ip = 16;
+  string last_login = 17;
+  string last_password_reset = 18;
+  int32 logins_count = 19;
+  int32 blocked = 20;
+  string given_name = 21;
+  string family_name = 22;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUserResponse {
+  repeated User data = 1;
+}
